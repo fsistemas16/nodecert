@@ -4,6 +4,7 @@ const fs = require('fs')
 const sharp = require("sharp")
 const puppeteer = require("puppeteer")
 var path = require('path');
+
 /*
 https://answers.microsoft.com/en-us/windows/forum/all/how-to-check-dpi-on-png/3e18a21c-16ae-464e-b80d-a7d73c2e121c
 https://pptr.dev/#?product=Puppeteer&version=v9.1.1&show=api-pageaddscripttagoptions
@@ -31,7 +32,7 @@ const testp = async (html) => {
     await page.setContent(html);
     await page.addStyleTag({path: path.resolve('./public') + '/stylesheets/app2.css'})
     await page.addStyleTag({path: path.resolve('./public') +  '/stylesheets/ucc.css'})
-    page.setViewport({ width: options.width - 280 , height :options.height  - 200 , deviceScaleFactor: 2});
+    page.setViewport({ width: options.width  , height :options.height  , deviceScaleFactor: 2});
 
     
     console.log(page.viewport())    ;
@@ -85,7 +86,7 @@ const testp = async (html) => {
 const merge = function(){
    
     let fondo = 'imagessharp/fondoDiplomaFjsPerkins-69.png';
-    let domtext = 'imagespuppeteer/puppeter-74-resize.png';
+    let domtext = 'imagespuppeteer/puppeter-73-resize.png';
 
     sharp(fondo)
         .composite([{ input: domtext  }])

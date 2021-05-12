@@ -1,7 +1,0 @@
-{
-    "require": {
-        "mikehaertl/phpwkhtmltopdf": "^2.5",
-        "anam/phantommagick": "^2.0",
-        "anam/phantomjs-linux-x86-binary": "^2.1"
-    }
-}

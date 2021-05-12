@@ -3,7 +3,8 @@ var router = express.Router();
 const  puppet  = require('../controller/puppet');
 const fs = require('fs')
 
-var htmlToImage = require('html-to-image'); //https://www.npmjs.com/package/html-to-image
+// var htmlToImage = require('html-to-image'); 
+//https://www.npmjs.com/package/html-to-image
 
 
 
@@ -21,6 +22,10 @@ router.get('/print', function(req, res, next) {
 
 router.get('/dc', function(req, res, next) {
   res.render('domcert');
+});
+
+router.get('/dco', function(req, res, next) {
+  res.render('extractcssdomcert');
 });
 
 router.get('/htc', function(req, res, next) {
