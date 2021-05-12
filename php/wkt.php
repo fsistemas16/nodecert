@@ -19,10 +19,11 @@ test();
  		// die( $conv->getAlternateBinary());
  		// die(Path::binaryPath());
 		// $r = $conv->source("<div>holamundo</div>")
-		$r = $conv->source('htmldomcert.html');
-			    $conv->toPng()
-			    ->save('otro.png');
+		$r = $conv->source('holamundo.html');
+		$s = 	    $conv->toPng()
+			    ->save('otro2.png');
 		// echo($r);
+		var_dump($s);
 		var_dump($r);
         die('s');
 

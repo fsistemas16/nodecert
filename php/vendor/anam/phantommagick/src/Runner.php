@@ -162,7 +162,6 @@ class Runner
     public function pickBinary()
     {
         if ($this->binary != 'phantomjs') {
-            die('asd');
             die( $this->verifyBinary($this->binary));
             if (! $this->verifyBinary($this->binary)) {
                 throw new Exception('Binary does not exist');

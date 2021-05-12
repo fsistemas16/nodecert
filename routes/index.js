@@ -1,45 +1,49 @@
 var express = require('express');
 var router = express.Router();
+const  puppet  = require('../controller/puppet');
 const fs = require('fs')
-const { createCanvas, loadImage } = require('canvas');
+
 var htmlToImage = require('html-to-image'); //https://www.npmjs.com/package/html-to-image
 
 
 
- 
 
 /* GET home page. */
 router.get('/a', function(req, res, next) {
-  // return 's';
-  res.render('index', { title: 'Express' });
+  res.render('webworkerjspdf', { title: 'Express' });
 });
 
 
 router.get('/print', function(req, res, next) {
+  
   res.render('screenshot');
 });
 
-
-router.post('/save', function(req, res, next) {
-  // console.log(req.body);
-  // var img = new Image();
-  
-  let htmlContent = req.body.html;
-  
-
-
- 
-  // fs.writeFile('helloworld.jpg', img, function (err) {
-  //   if (err) return console.log(err);
-  //   console.log('Hello World > helloworld.txt');
-  // })
-
-  // fs.writeFile('helloworld.jpg', htmlContent, function (err) {
-  //   if (err) return console.log(err);
-  //   console.log('Hello World > helloworld.txt');
-  // })
-   res.json('casa');
+router.get('/dc', function(req, res, next) {
+  res.render('domcert');
 });
+
+router.get('/htc', function(req, res, next) {
+  res.render('htc');
+});
+
+router.post('/m', function(req, res, next) {
+  console.log(puppet.merge());
+  res.send('f');
+});
+
+router.post('/q', function(req, res, next) {
+  let  { html }  = req.body;
+  puppet.testp(html);
+  res.send('f');
+});
+
+router.post('/p', function(req, res, next) {
+  console.log(puppet.svgTopng());
+  res.send('f');
+});
+
+
 
 router.get('/gett', function(req, res, next) {
   file = 'fondoDiplomaFjsPerkins.svg';
@@ -62,9 +66,5 @@ router.get('/gett', function(req, res, next) {
   // return res.json({'data': r});
 });
 
-
-function convertimage(){
-
-}
 module.exports = router;
 
