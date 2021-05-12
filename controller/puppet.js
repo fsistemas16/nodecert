@@ -15,9 +15,15 @@ const hola = function(){
 
 const testp = async (html) => {
   
-    const browser = await puppeteer.launch();
+    // const browser = await puppeteer.launch();
+    
+    const browser = await puppeteer.launch({
+        headless: true,
+        args: ['--no-sandbox','--disable-setuid-sandbox']
+    })
+    
     const page = await browser.newPage();
-
+    
     //A4
     let options = {
         width: 1122 + 140 ,
