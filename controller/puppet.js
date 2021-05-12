@@ -100,11 +100,15 @@ const merge = async function(pfondo,pdomtext){
     
     let fondo = 'imagessharp/' + pfondo; 
     let domtext = 'imagespuppeteer/'  + pdomtext;
+    console.log("puppet.js ~ line 103 ~ merge ~ domtext", domtext);
     let filename = 'output-'  + Math.round(Math.random() * 100) + '.png';
     
     let merge = await sharp(fondo)
         .composite([{ input: domtext  }])
-        .toBuffer({ resolveWithObject: true });
+        .toBuffer({ resolveWithObject: true })
+        .catch(function(err) {
+            console.log('--ERROR--',err)
+        });
         // .toFile('imagemerge/' + filename);
 
     return   merge.data.toString("base64")  ;    
