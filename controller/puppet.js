@@ -23,13 +23,13 @@ const testp = async (html) => {
     })
     
     const page = await browser.newPage();
-    
+
     //A4
     let options = {
-        width: 1122 + 140 ,
-        height: 790 + 100 
-        // width: 1122 ,
-        // height: 790 
+        // width: 1122 + 140 ,
+        // height: 790 + 100 
+        width: 1122 ,
+        height: 790 
     }
 
 
@@ -41,7 +41,7 @@ const testp = async (html) => {
     page.setViewport({ width: options.width  , height :options.height  , deviceScaleFactor: 2});
 
     
-    console.log(page.viewport())    ;
+    // console.log(page.viewport())    ;
     // let content = await page.content();
     // console.log("🚀 ~ file: puppet.js ~ line 33 ~ testp ~ content", content);
 
@@ -66,7 +66,9 @@ const testp = async (html) => {
             // } 
 
         });
+    
     console.log(filename);
+    
     await browser.close();
 
     sharp(`imagespuppeteer/${filename}.png`,{ density: 300})
@@ -84,19 +86,29 @@ const testp = async (html) => {
             }
         )
         .toFile(`imagespuppeteer/${filename}-resize.png`)
-    
+
+        
+    return { 'filename'  : filename + '-resize.png' } ;
    
 
   };
 
-const merge = function(){
+const merge = async function(pfondo,pdomtext){
    
-    let fondo = 'imagessharp/fondoDiplomaFjsPerkins-69.png';
-    let domtext = 'imagespuppeteer/puppeter-73-resize.png';
-
+    // let fondo = 'imagessharp/fondoDiplomaFjsPerkins-69.png';
+    // let domtext = 'imagespuppeteer/puppeter-73-resize.png';
+    
+    let fondo = 'imagessharp/' + pfondo; 
+    let domtext = 'imagespuppeteer/'  + pdomtext;
+    let filename = 'output-'  + Math.round(Math.random() * 100) + '.png';
+    
     sharp(fondo)
         .composite([{ input: domtext  }])
-        .toFile('imagemerge/output-' +Math.round(Math.random() * 100)+ '.png'  );
+        .toFile('imagemerge/' + filename);
+
+    return { 'filename'  : filename } ;
+
+    
 }
 
 const generate = function(html){
@@ -118,22 +130,23 @@ const generate = function(html){
 }
 
 
-const svgTopng = function (){
+const svgTopng = async function (){
     // sharp("imagessharp/new-file35.830499953295124.png")
     // .metadata().then(function(metadata) {
     //     console.log(metadata)
     // });
 
-    // sharp("fondoDiplomaFjsPerkins.svg")
-    // .metadata().then(function(metadata) {
-    //     console.log(metadata)
-    // });
+    
     let options = {
         // width: 1122 + 140 * 2 ,
         // height: 790 + 100 * 2 
         width: 1122 * 2 ,
         height: 790 * 2 
     }
+
+    let filename = "fondoDiplomaFjsPerkins-" +Math.round(Math.random() *100);
+
+    // console.log(filename);
 
     sharp("fondoDiplomaFjsPerkins.svg",{ density: 300})
     .resize(    { 
@@ -149,13 +162,15 @@ const svgTopng = function (){
             compressionLevel:5
         }
     )
-    .toFile("imagessharp/fondoDiplomaFjsPerkins-" +Math.round(Math.random() *100) +".png")
+    .toFile("imagessharp/" + filename + ".png")
     .then(function(info) {
         console.log('info',info)
     })
     .catch(function(err) {
         console.log(err)
     })
+
+    return {'filename': filename };
 }
 
 

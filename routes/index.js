@@ -32,20 +32,23 @@ router.get('/htc', function(req, res, next) {
   res.render('htc');
 });
 
-router.post('/m', function(req, res, next) {
-  console.log(puppet.merge());
-  res.send('f');
+router.post('/m', async function(req, res, next) {
+  let {fondo,domtext} = req.body;
+  // console.log(puppet.merge(fondo,domtext));
+  let response = await puppet.merge(fondo,domtext);
+  res.send(response);
 });
 
-router.post('/q', function(req, res, next) {
+router.post('/q', async function(req, res, next) {
   let  { html }  = req.body;
-  puppet.testp(html);
-  res.send('f');
+  let response = await puppet.testp(html);
+  res.send(response);
 });
 
-router.post('/p', function(req, res, next) {
-  console.log(puppet.svgTopng());
-  res.send('f');
+router.post('/p', async function(req, res, next) {
+  // console.log(puppet.svgTopng());
+  let response = await puppet.svgTopng();
+  res.send(response);
 });
 
 
