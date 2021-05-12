@@ -102,9 +102,13 @@ const merge = async function(pfondo,pdomtext){
     let domtext = 'imagespuppeteer/'  + pdomtext;
     let filename = 'output-'  + Math.round(Math.random() * 100) + '.png';
     
-    sharp(fondo)
+    let merge = await sharp(fondo)
         .composite([{ input: domtext  }])
-        .toFile('imagemerge/' + filename);
+        .toBuffer({ resolveWithObject: true });
+        // .toFile('imagemerge/' + filename);
+
+    return   merge.data.toString("base64")  ;    
+    return  { 'binary': merge.data.toString("base64") } ;    
 
     return { 'filename'  : filename } ;
 
