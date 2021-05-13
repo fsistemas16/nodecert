@@ -86,13 +86,14 @@ const htmlToImg = async (html) => {
     };
 };
 
-const merge = async function (pfondo, pdomtext, format = ".pdf") {
-    format = format || ".pdf";
+const merge = async function (pfondo, pdomtext, format ) {
+    format = format || ".png";
 
     let fondo = `imagessharp/${pfondo}`;
     let domtext = `imagespuppeteer/${pdomtext}`;
 
     let filename = `output-${Math.round(Math.random() * 100) + format}`;
+    console.log('filename: ', filename);
 
     // let merge = await sharp(fondo)
     //     .composite([{ input: domtext  }])
@@ -107,7 +108,8 @@ const merge = async function (pfondo, pdomtext, format = ".pdf") {
         input: domtext
     }]);
 
-    if (format == ".png") {
+    // if (format == ".png") {
+    if (format == "bin") {
 
         let result = await merge
             .toBuffer({
