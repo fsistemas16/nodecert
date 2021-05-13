@@ -16,6 +16,7 @@
     "html-to-image": "^1.6.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "pdfkit": "^0.12.1",
     "puppeteer": "^9.1.1",
     "sharp": "^0.28.1"
   },
