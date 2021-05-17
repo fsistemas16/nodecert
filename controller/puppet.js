@@ -380,19 +380,11 @@ const pdfToBlob = function (name_pdf, name_img) {
  */
 const convertHtmlToPdf = async function(name_pdf,html){
 
-   let  { filename } = await _htmlToImg(name_pdf,html);
-//    let   filename = await _htmlToImg(name_pdf,html);
-   
-    console.log('filename png : ', filename);
+    let  { filename } = await _htmlToImg(name_pdf,html);
 
-    //result, con extension .png
-    //    let filename = 'cc';
-   let { result } = await _merge(filename, 'pdf');
+    let { result } = await _merge(filename, 'pdf');
 
-   console.log('result: ', result);
-
-
-   return await pdfToBlob(filename,result)
+    return await pdfToBlob(filename,result)
 
 }
 
