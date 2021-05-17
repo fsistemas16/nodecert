@@ -6,6 +6,7 @@
     "startdev": "nodemon  --trace-warnings ./bin/www",
     "start": "node ./bin/www"
   },
+  "heroku-run-build-script": false,
   "dependencies": {
     "blob-stream": "^0.1.3",
     "cookie-parser": "~1.4.4",
