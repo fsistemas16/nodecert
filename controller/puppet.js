@@ -4,6 +4,7 @@ const sharp = require("sharp");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const PDFDocument = require("pdfkit");
+const stream = require("./stream");
 
 const htmlToImg = async (html) => {
     // const browser = await puppeteer.launch();
@@ -103,8 +104,6 @@ const _htmlToImg = async ( filename, html) => {
 
     //A4
     let options = {
-        // width: 1122 + 140 ,
-        // height: 790 + 100
         width: 1122,
         height: 790,
     };
@@ -126,30 +125,22 @@ const _htmlToImg = async ( filename, html) => {
         deviceScaleFactor: 2,
     });
 
-    await page.screenshot({
+    let res =  await page.screenshot({
+        
         path: `imagespuppeteer/${filename}.png`,
         fullPage: true,
         omitBackground: true,
-        // clip:{
-        //         // width: 1122  ,
-        //         // height: 790 ,
-        //         // width: 1122  + 70,
-        //         // height: 790 + 200 ,
-        //         width: options.width - 70,
-        //         height: options.height - 10,
-        //         x:0,
-        //         y:0
-        // }
+        encoding:"base64"
     });
-
+    
+    // console.log('res: ', res);
 
     await browser.close();
-    
-    // sharp.cache(false);
-    // return new Promise((resolve) => {
 
+    let imgBuffer = Buffer.from(res, 'base64');
     
-  return   sharp(`imagespuppeteer/${filename}.png`, {
+//   return   sharp(`imagespuppeteer/${filename}.png`, {
+  return   sharp(imgBuffer, {
         density: 300
     }).resize({
         fit: sharp.fit.cover,
@@ -162,10 +153,15 @@ const _htmlToImg = async ( filename, html) => {
             quality: 100,
             compressionLevel: 5,
         })
-        .toFile(`imagespuppeteer/${filename}-resize.png`).then((metadata) => {
-            // console.log(metadata); 
-            return { filename: filename + "-resize" };
-        });
+        .toBuffer().then((data) => {
+            // console.log(data); 
+            return data; 
+            return Buffer.from(data).toString('base64');
+        })
+        // .toFile(`imagespuppeteer/${filename}-resize.png`).then((metadata) => {
+        //     console.log(metadata); 
+        //     return { filename: filename + "-resize" };
+        // });
 }
 
 const merge = async function (pfondo, pdomtext, format ) {
@@ -224,35 +220,32 @@ const merge = async function (pfondo, pdomtext, format ) {
 };
 
 const _merge = async function (dom_img, outformat) {
-    
-    console.log('dom_img: ', dom_img);
-
     outformat = outformat || "bin";
 
-    // let fondo = `fondos/${pfondo}`;
     let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
-    let path_dom_img = `imagespuppeteer/${dom_img}.png`;
-    // let path_dom_img = `imagespuppeteer/certificado14153-1919835-resize.png`;
+    // let path_dom_img = `imagespuppeteer/${dom_img}.png`;
+    
+    let path_dom_img = dom_img;
+
+    // let filename = dom_img + '.png';
+
+    // console.log("filename:", filename)
 
     console.log('path_dom_img: ', path_dom_img);
-
-
-    // let filename = `output-${Math.round(Math.random() * 100) + outformat}`;
-    let filename = dom_img + '.png';
-    // let format =  ".png";
-    // let filename = `output-${Math.round(Math.random() * 100) + format}`;
-
-    console.log("filename:", filename)
 
     let merge = sharp(fondo).composite([{
         input: path_dom_img
     }]);
 
     return await merge
-        .toFile('imagemerge/' + filename).then( (metadata) => {
-            return {
-                'result': filename
-            } 
+        // .toFile('imagemerge/' + filename).then( (metadata) => {
+        //     return {
+        //         'result': filename
+        //     } 
+        // })
+        .toBuffer().then((data) => {
+            return data;
+            return Buffer.from(data).toString('base64');
         })
         .catch(function (err) {
             console.log("--ERROR png 2 --", err);
@@ -338,7 +331,7 @@ const imgToPdf = function (name_pdf, name_img) {
     });
 };
 
-const pdfToBlob = function (name_pdf, name_img) {
+const pdfToBlob_old = function (name_pdf, name_img) {
     //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
     
     let path_file = `imagemerge/${name_pdf}.pdf`;
@@ -372,6 +365,40 @@ const pdfToBlob = function (name_pdf, name_img) {
     });
 };
 
+const pdfToBlob = function (name_pdf, blob) {
+    doc = new PDFDocument({
+        size: "A4",
+        layout: "landscape"
+    });
+    
+    let path_file = 'imagemerge/output-temp.pdf';
+
+    const stream = fs.createWriteStream(path_file);
+
+    doc.pipe(stream);
+
+    doc.image(blob, 0, 0, {
+        fit: [841.89, 595.28]
+    });
+    
+    let result = doc.end();
+
+    console.log('result: ', result);
+
+
+
+    // // await new Promise(resolve => {
+    return new Promise((resolve) => {
+         stream.on("finish", function (data) {
+            fs.readFile(path_file,'base64',function(err,data){
+                resolve({
+                    response: data
+                });
+            })
+        });
+    });
+};
+
 /**
  * 
  * @param {nombre del pdf sin extension} name_pdf 
@@ -380,14 +407,45 @@ const pdfToBlob = function (name_pdf, name_img) {
  */
 const convertHtmlToPdf = async function(name_pdf,html){
 
-    let  { filename } = await _htmlToImg(name_pdf,html);
+    // let  { filename } = await _htmlToImg(name_pdf,html);
+    let base64Dom =  await _htmlToImg(name_pdf,html);
+    
+    //    let { result } = await _merge(filename, 'pdf');
+    let blobMerge = await _merge(base64Dom, 'pdf');
+//    return  test(blobMerge); 
 
-    let { result } = await _merge(filename, 'pdf');
-
-    return await pdfToBlob(filename,result)
-
+   let r = await  pdfToBlob(name_pdf,blobMerge)
+    return r ; 
 }
 
+const test = function (blobMerge){
+    let doc = new PDFDocument();
+    
+  
+    let writeStream = new stream.WritableBufferStream();
+
+    // pip the document to write stream
+    doc.pipe(writeStream);
+
+    // add some content
+    // doc.text('Some text!', 100, 100);
+    doc.image(blobMerge, 0, 0, {
+        fit: [841.89, 595.28]
+    });
+
+    // end document
+    doc.end()
+
+    // wait for the writing to finish
+   return new Promise((resolve) => {
+
+       writeStream.on('finish', () => {
+           // console log pdf as bas64 string
+           // console.log(writeStream.toBuffer().toString('base64'));
+           return resolve(writeStream.toBuffer().toString('base64'));
+        });
+    })
+}
 
 module.exports = {
     svgTopng,

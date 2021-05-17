@@ -84,25 +84,31 @@ router.post('/getBlobPdf', async function(req, res, next) {
 
 });
 
-router.post('/convertHtmlToPdf', async function(req, res, next) {
-  
-  let {name_pdf, html } = req.body;
-  
+router.post('/convertHtmlToPdf', async function (req, res, next) {
+
+  let {
+    name_pdf,
+    html
+  } = req.body;
+
   // await puppet.convertHtmlToPdf(name_pdf,html);
 
- 
- console.log('-- ini -- '); 
- let { response } = await puppet.convertHtmlToPdf(name_pdf,html);
 
- let responseHttp = {
-   data: response,
-   name_pdf: name_pdf
- }
- 
- console.log('-- fin -- '); 
+  console.log('-- ini -- ');
+  // let { //   response // } = await puppet.convertHtmlToPdf(name_pdf, html);
+    
+  let response =  await puppet.convertHtmlToPdf(name_pdf, html);
   
-  res.send(responseHttp);
-  // res.send(response);
+
+  // let responseHttp = {
+  //   data: response,
+  //   name_pdf: name_pdf
+  // }
+
+  // console.log('-- fin -- ');
+
+  // res.send(responseHttp);
+   res.send(response);
 
 });
 
