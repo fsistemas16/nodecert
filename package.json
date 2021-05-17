@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "startdev": "nodemon ./bin/www",
+    "startdev": "nodemon  --trace-warnings ./bin/www",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -12,8 +12,6 @@
     "dom-to-image": "^2.6.0",
     "ejs": "~2.6.1",
     "express": "^4.17.1",
-    "html-pdf": "^3.0.0",
-    "html-to-image": "^1.6.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
     "pdfkit": "^0.12.1",

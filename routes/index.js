@@ -54,24 +54,10 @@ router.post('/p', async function(req, res, next) {
   res.send(response);
 });
 
-router.all('/c', async function(req, res, next) {
-  console.log(req.method);
-  // return; 
-  // console.log(puppet.svgTopng());
-  // let response =  puppet.imgToPdf();
-  var name_pdf,name_img ;
-  if(req.method == 'POST'){
+router.get('/getPdf', async function(req, res, next) {
 
-   name_pdf = req.body.name_pdf;
-   name_img =  req.body.name_img;
-    
-  }else{
-    
-    name_pdf = req.query.name_pdf;
-    name_img =  req.query.name_img;
 
-  }
-  console.log('name_pdf,name_img: ', name_pdf,name_img);
+  let {name_pdf, name_img} = req.query;
   
   await puppet.imgToPdf(name_pdf,name_img);
   
@@ -85,8 +71,31 @@ router.all('/c', async function(req, res, next) {
   res.setHeader('Content-Disposition', 'attachment; filename='+ name_pdf + '.pdf');
   
   file.pipe(res);
-  // res.end();
+
 });
+
+router.post('/getBlobPdf', async function(req, res, next) {
+  
+  let {name_pdf, name_img} = req.body;
+  
+  let {response} = await puppet.pdfToBlob(name_pdf,name_img);
+  
+  res.send(response);
+
+});
+
+router.post('/convertHtmlToPdf', async function(req, res, next) {
+  
+  let {name_pdf, html } = req.body;
+  
+  // await puppet.convertHtmlToPdf(name_pdf,html);
+  let { response } = await puppet.convertHtmlToPdf(name_pdf,html);
+  
+  res.send(response);
+  // res.send(response);
+
+});
+
 
 
 
