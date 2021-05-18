@@ -1,0 +1,12 @@
+version: "2"
+services:
+  node:
+    image: "canvasnode:4"
+    working_dir: /app
+    environment:
+      - NODE_ENV=dev
+    volumes:
+      - ./:/app
+    ports:
+        - "3000:3000"
+    command: "npm run startdev"
