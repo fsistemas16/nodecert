@@ -91,51 +91,12 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
     html
   } = req.body;
 
-  // await puppet.convertHtmlToPdf(name_pdf,html);
-
-
   console.log('-- ini -- ');
-  // let { //   response // } = await puppet.convertHtmlToPdf(name_pdf, html);
-    
   let response =  await puppet.convertHtmlToPdf(name_pdf, html);
-  
-
-  // let responseHttp = {
-  //   data: response,
-  //   name_pdf: name_pdf
-  // }
-
-  // console.log('-- fin -- ');
-
-  // res.send(responseHttp);
-   res.send(response);
-
+  res.send(response);
+  console.log('-- fin -- ');
 });
 
-
-
-
-// router.get('/gett', function(req, res, next) {
-//   file = 'fondoDiplomaFjsPerkins.svg';
-//   fs.access(file, fs.constants.F_OK, (err) => {
-//   console.log("🚀 ~ file: index.js ~ line 75 ~ router.get ~ stat.size", stat.size)
-//     if (err) {
-//       res.set("Content-Type", "text/plain");
-//       res.status(404).end("Not found");
-//       return false;
-//     }
-
-//     var s = fs.createReadStream(file).on("data", function(data) {});
-
-//     s.on("open", function() {
-//       type = 'svg/xml';
-//       res.set("Content-Type", type);
-//       s.pipe(res);
-//     });
-//   });
-//   // let r = fs.readFileSync('fondoDiplomaFjsPerkins.svg');
-//   // return res.json({'data': r});
-// });
 
 module.exports = router;
 
