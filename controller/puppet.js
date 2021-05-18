@@ -4,6 +4,7 @@ const sharp = require("sharp");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const PDFDocument = require("pdfkit");
+const moment = require("moment");
 
 const htmlToImg = async (html) => {
     // const browser = await puppeteer.launch();
@@ -327,13 +328,10 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
 }
 
 const _merge = async function (buffer_dom, outformat) {
-    console.log('_merge: ');
-    
     let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
 
     let merge = sharp(fondo).composite([{
         input: buffer_dom,
-        density:300
     }]);
 
     return await merge
@@ -354,6 +352,7 @@ const _merge = async function (buffer_dom, outformat) {
 
 
 const pdfToBlob = function (blob) {
+    console.log('pdfToBlob: ', moment().format('mm:ss.SSS'));
     
     doc = new PDFDocument({
         size: "A4",
@@ -390,13 +389,13 @@ const pdfToBlob = function (blob) {
  * @returns 
  */
 const convertHtmlToPdf = async function(name_pdf,html,options){
-    console.log('convertHtmlToPdf: ');
-
-
+    console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
     
     let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
-    // let buffer_dom =  await _htmlToImg(name_pdf,html);
+    console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
+    
     let buffer_merge = await _merge(buffer_dom, 'pdf');
+    console.log('_merge: ', moment().format('mm:ss.SSS'));
     
 
     return { data: await  pdfToBlob(buffer_merge), name_pdf:name_pdf };

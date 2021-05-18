@@ -3,7 +3,7 @@ var router = express.Router();
 const path = require('path');
 const fs = require('fs')
 const  puppet  = require('../controller/puppet');
-
+const moment = require("moment");
 // var htmlToImage = require('html-to-image'); 
 //https://www.npmjs.com/package/html-to-image
 
@@ -92,12 +92,10 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
     options
   } = req.body;
   
-  console.log('options: ', typeof(options));
-  console.log('options: ', options); 
-  
   
   let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
   let response =  await puppet.convertHtmlToPdf(name_pdf, html, options_output);
+  console.log('response: ', moment().format('mm:ss.SSS'));
   res.send(response);
 
 });
