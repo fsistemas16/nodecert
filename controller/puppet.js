@@ -86,6 +86,7 @@ const htmlToImg = async (html) => {
         filename: filename + "-resize.png"
     };
 };
+
 const merge = async function (pfondo, pdomtext, format ) {
     format = format || ".png";
 
@@ -291,22 +292,18 @@ const _htmlToImg = async ( filename, html) => {
         })
 }
 
-const _merge = async function (dom_img, outformat) {
+const _merge = async function (buffer_dom, outformat) {
     
-    outformat = outformat || "bin";
     let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
-    let path_dom_img = dom_img;
-
-
 
     let merge = sharp(fondo).composite([{
-        input: path_dom_img
+        input: buffer_dom
     }]);
 
     return await merge
         .toBuffer().then((data) => {
             return data;
-            return Buffer.from(data).toString('base64');
+            // return Buffer.from(data).toString('base64');
         })
         .catch(function (err) {
             console.log("--ERROR png 2 --", err);
@@ -389,9 +386,9 @@ const pdfToBlob = function (blob) {
 const convertHtmlToPdf = async function(name_pdf,html){
 
     // let  { filename } = await _htmlToImg(name_pdf,html);
-    let base64Dom =  await _htmlToImg(name_pdf,html);
+    let buffer_dom =  await _htmlToImg(name_pdf,html);
     
-    let blobMerge = await _merge(base64Dom, 'pdf');
+    let blobMerge = await _merge(buffer_dom, 'pdf');
 
     return {data: await  pdfToBlob(blobMerge), name_pdf:name_pdf };
     
