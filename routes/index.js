@@ -88,13 +88,18 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
 
   let {
     name_pdf,
-    html
+    html,
+    options
   } = req.body;
-
-  console.log('-- ini -- ');
-  let response =  await puppet.convertHtmlToPdf(name_pdf, html);
+  
+  console.log('options: ', typeof(options));
+  console.log('options: ', options); 
+  
+  
+  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
+  let response =  await puppet.convertHtmlToPdf(name_pdf, html, options_output);
   res.send(response);
-  console.log('-- fin -- ');
+
 });
 
 

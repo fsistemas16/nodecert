@@ -190,6 +190,38 @@ const svgTopng = async function () {
     };
 };
 
+
+const imgToPdf = function (name_pdf, name_img) {
+    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
+    
+    let path_file = `imagemerge/${name_pdf}.pdf`;
+
+    doc = new PDFDocument({
+        size: "A4",
+        layout: "landscape"
+    });
+    
+    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
+    const stream = fs.createWriteStream(path_file);
+
+    doc.pipe(stream);
+
+    doc.image(`imagemerge/${name_img}.png`, 0, 0, {
+        fit: [841.89, 595.28]
+    });
+
+    let result = doc.end();
+
+    // await new Promise(resolve => {
+    return new Promise((resolve) => {
+        stream.on("finish", function () {
+            resolve({
+                response: name_pdf
+            });
+        });
+    });
+};
+
 const pdfToBlob_old = function (name_pdf, name_img) {
     //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
     
@@ -229,8 +261,11 @@ const pdfToBlob_old = function (name_pdf, name_img) {
  * @param {*} html 
  * @returns 
  */  
-const _htmlToImg = async ( filename, html) => {
+const _htmlToImg = async ( filename, html, scale = 1) => {
+    console.log('scale: ', scale);
     // const browser = await puppeteer.launch();
+    // let scale = scale || 1; 
+
     const browser = await puppeteer.launch({
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
@@ -263,7 +298,7 @@ const _htmlToImg = async ( filename, html) => {
     page.setViewport({
         width: options.width,
         height: options.height,
-        deviceScaleFactor: 2,
+        deviceScaleFactor: scale,
     });
 
     let screenshot =  await page.screenshot({
@@ -284,8 +319,7 @@ const _htmlToImg = async ( filename, html) => {
         height: options_output_size.height,
         })
         .png({
-            quality: 100,
-            compressionLevel: 5,
+            compressionLevel: 9
         })
         .toBuffer().then((data) => {
             return data; 
@@ -293,11 +327,13 @@ const _htmlToImg = async ( filename, html) => {
 }
 
 const _merge = async function (buffer_dom, outformat) {
+    console.log('_merge: ');
     
     let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
 
     let merge = sharp(fondo).composite([{
-        input: buffer_dom
+        input: buffer_dom,
+        density:300
     }]);
 
     return await merge
@@ -313,36 +349,7 @@ const _merge = async function (buffer_dom, outformat) {
 
 
 
-const imgToPdf = function (name_pdf, name_img) {
-    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
-    
-    let path_file = `imagemerge/${name_pdf}.pdf`;
 
-    doc = new PDFDocument({
-        size: "A4",
-        layout: "landscape"
-    });
-    
-    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
-    const stream = fs.createWriteStream(path_file);
-
-    doc.pipe(stream);
-
-    doc.image(`imagemerge/${name_img}.png`, 0, 0, {
-        fit: [841.89, 595.28]
-    });
-
-    let result = doc.end();
-
-    // await new Promise(resolve => {
-    return new Promise((resolve) => {
-        stream.on("finish", function () {
-            resolve({
-                response: name_pdf
-            });
-        });
-    });
-};
 
 
 
@@ -363,9 +370,8 @@ const pdfToBlob = function (blob) {
         fit: [841.89, 595.28]
     });
     
-    let result = doc.end();
+    let res = doc.end();
     
-    // // await new Promise(resolve => {
     return new Promise((resolve) => {
          stream.on("finish", function (data) {
             fs.readFile(path_file,'base64',function(err,data){
@@ -383,14 +389,17 @@ const pdfToBlob = function (blob) {
  * @param {raw string dom certificado } html 
  * @returns 
  */
-const convertHtmlToPdf = async function(name_pdf,html){
+const convertHtmlToPdf = async function(name_pdf,html,options){
+    console.log('convertHtmlToPdf: ');
 
-    // let  { filename } = await _htmlToImg(name_pdf,html);
-    let buffer_dom =  await _htmlToImg(name_pdf,html);
+
     
-    let blobMerge = await _merge(buffer_dom, 'pdf');
+    // let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
+    let buffer_dom =  await _htmlToImg(name_pdf,html);
+    let buffer_merge = await _merge(buffer_dom, 'pdf');
+    
 
-    return {data: await  pdfToBlob(blobMerge), name_pdf:name_pdf };
+    return { data: await  pdfToBlob(buffer_merge), name_pdf:name_pdf };
     
 }
 
