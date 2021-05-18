@@ -25,3 +25,8 @@ https://medium.com/@viviancpy/save-screenshot-of-websites-with-puppeteer-cloudin
 
 https://gist.github.com/andrei-tofan/b75082574544aee19de1295a48323ad5
 
+
+
+docker run -it --rm --name canvasnode -v C:\wamp64\www\Desarrollo\canvasnode:/home/node/app -p 30001:3000 nodecanvas:1 npm run startdev
+
+https://www.docker.com/blog/keep-nodejs-rockin-in-docker/

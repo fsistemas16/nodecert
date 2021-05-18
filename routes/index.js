@@ -12,6 +12,7 @@ const  puppet  = require('../controller/puppet');
 
 /* GET home page. */
 router.get('/a', function(req, res, next) {
+  
   res.render('webworkerjspdf', { title: 'Express' });
 });
 
