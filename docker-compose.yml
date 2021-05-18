@@ -7,6 +7,9 @@ services:
       - NODE_ENV=dev
     volumes:
       - ./:/app
+      - ./exclude:/app/node_modules/
     ports:
-        - "3000:3000"
+      - "3000:3000"
     command: "npm run startdev"
+volumes:
+    exclude:
