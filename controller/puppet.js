@@ -394,8 +394,8 @@ const convertHtmlToPdf = async function(name_pdf,html,options){
 
 
     
-    // let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
-    let buffer_dom =  await _htmlToImg(name_pdf,html);
+    let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
+    // let buffer_dom =  await _htmlToImg(name_pdf,html);
     let buffer_merge = await _merge(buffer_dom, 'pdf');
     
 
