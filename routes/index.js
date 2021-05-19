@@ -4,11 +4,6 @@ const path = require('path');
 const fs = require('fs')
 const  puppet  = require('../controller/puppet');
 const moment = require("moment");
-// var htmlToImage = require('html-to-image'); 
-//https://www.npmjs.com/package/html-to-image
-
-
-
 
 /* GET home page. */
 router.get('/a', function(req, res, next) {
