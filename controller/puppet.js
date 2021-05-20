@@ -7,22 +7,27 @@ const PDFDocument = require("pdfkit");
 const moment = require("moment");
 
 
-
+const _getUrlFontsStyle = () => {
+    let fonts = ['Pattaya','Roboto','RalewayRegular','Exo+2','Abek','Montserrat','Montserrat+Regular','Montserrat+Bold'];
+    // return "<style>@import url('https://fonts.googleapis.com/css?family=Pattaya|Roboto|RalewayRegular|Exo+2|Abel|Montserrat|Montserrat+Regular|Montserrat+Bold</style>"
+    return `<style>@import url('https://fonts.googleapis.com/css?family=${fonts.join('|')}</style>`
+}
 /**
  * privada usada desde adentro 
  * @param {*} html 
  * @returns 
  */  
 const _htmlToImg = async ( filename, html, scale = 1) => {
-    // const browser = await puppeteer.launch();
-    // let scale = scale || 1; 
-
+    
     const browser = await puppeteer.launch({
         headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
+
+    // https://github.com/puppeteer/puppeteer/issues/422
+    let fonts = _getUrlFontsStyle(); 
 
     //A4 px
     let options = {
@@ -36,18 +41,22 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
     };
     
     // page.setViewport({width: options.width, height: options.height, deviceScaleFactor: 2});
-
-    await page.setContent(html);
-    
+    // page.setCacheEnabled(false);
+    await page.setContent(html + fonts, {waitUntil: 'networkidle2'});
+  
     await page.addStyleTag({
         path: path.resolve("./public") + "/stylesheets/app2_original.css",
-        // path: path.resolve("./public") + "/stylesheets/app2.css",
-    });
-    await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/ucc_original.css",
-        // path: path.resolve("./public") + "/stylesheets/ucc.css",
     });
     
+    await page.addStyleTag({
+        path: path.resolve("./public") + "/stylesheets/ucc_original.css"
+    });
+
+    let content = await page.content();
+    // console.log('content: ', content);
+    
+    // fs.writeFileSync('imagemerge/test.html', content);
+
     page.setViewport({
         width: options.width,
         height: options.height,
@@ -65,8 +74,6 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
         omitBackground: true,
         encoding: "binary"
     });
-    
-
     await browser.close();
     // let imgBuffer =  Buffer.from(res, 'base64');
     
@@ -118,7 +125,10 @@ const pdfToBlob = function (blob) {
         layout: "landscape"
     });
     
-    let path_file = 'imagemerge/output-temp.pdf';
+    let name = 'output-temp' + moment().format('mmss') + '.pdf';
+    let path_file = 'imagemerge/' + name ;
+    console.log('path_file: ', path_file);
+    
 
     const stream = fs.createWriteStream(path_file);
 

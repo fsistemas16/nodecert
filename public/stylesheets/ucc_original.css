@@ -202,7 +202,7 @@ COLOR TITULO SECUNDARIO : #007bff;
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
-  font-weight: 700;
+  font-weight: 1400;
   src: url('../fonts/montserrat-v14-latin-700.eot'); /* IE9 Compat Modes */
   src: local('Montserrat Bold'), local('Montserrat-Bold'),
        url('../fonts/montserrat-v14-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
@@ -240,12 +240,28 @@ COLOR TITULO SECUNDARIO : #007bff;
        url('../fonts/montserrat-v14-latin-regular.svg#Montserrat') format('svg'); /* Legacy iOS */
 }
 
+@font-face {
+  font-family: 'Montserrat Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/montserrat-v14-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Montserrat Regular'), local('Montserrat-Regular'),
+       url('../fonts/montserrat-v14-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/montserrat-v14-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/montserrat-v14-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/montserrat-v14-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/montserrat-v14-latin-regular.svg#Montserrat') format('svg'); /* Legacy iOS */
+}
+
+/*  */
+      
+
 select > option {  font-family: FontAwesome,Arial !important;  }
 
 /*OLD VALORES*/
 body , label , li , button , div , span , select {
     font-family: Roboto, Arial, Abel;
-    font-size: 11pt;
+    font-size: 12pt;
     color: black;
     letter-spacing: 0px;
 }
