@@ -25,3 +25,8 @@ https://medium.com/@viviancpy/save-screenshot-of-websites-with-puppeteer-cloudin
 
 https://gist.github.com/andrei-tofan/b75082574544aee19de1295a48323ad5
 
+
+
+//73
+https://computingforgeeks.com/install-node-js-14-on-ubuntu-debian-linux/
+> sudo apt-get install -y libgbm-dev //dependencia de pupeteer
