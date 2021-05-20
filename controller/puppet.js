@@ -4,374 +4,131 @@ const sharp = require("sharp");
 const puppeteer = require("puppeteer");
 const path = require("path");
 const PDFDocument = require("pdfkit");
+const moment = require("moment");
 
 
-const htmlToImg = async (html) => {
-    // const browser = await puppeteer.launch();
-
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-
-    const page = await browser.newPage();
-
-    //A4
-    let options = {
-        // width: 1122 + 140 ,
-        // height: 790 + 100
-        width: 1122,
-        height: 790,
-    };
-
-    // page.setViewport({width: options.width, height: options.height, deviceScaleFactor: 2});
-
-    await page.setContent(html);
-    
-    await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/app2.css",
-    });
-    await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/ucc.css",
-    });
-    page.setViewport({
-        width: options.width,
-        height: options.height,
-        deviceScaleFactor: 2,
-    });
-
-    // console.log(page.viewport())    ;
-    // let content = await page.content();
-
-    let filename = `puppeter-${Math.round(Math.random() * 100)}`;
-    console.log(filename);
-
-    await page.screenshot({
-        path: `imagespuppeteer/${filename}.png`,
-        fullPage: true,
-        omitBackground: true,
-        // clip:{
-        //         // width: 1122  ,
-        //         // height: 790 ,
-        //         // width: 1122  + 70,
-        //         // height: 790 + 200 ,
-        //         width: options.width - 70,
-        //         height: options.height - 10,
-        //         x:0,
-        //         y:0
-        // }
-    });
-
-    console.log(filename);
-
-    await browser.close();
-
-    
-    sharp(`imagespuppeteer/${filename}.png`, {
-            density: 300
-        })
-        .resize({
-            fit: sharp.fit.cover,
-            width: 2244,
-            height: 1580,
-            // width: options.width,
-            // height: options.height ,
-        })
-        .png({
-            quality: 100,
-            compressionLevel: 5,
-        })
-        .toFile(`imagespuppeteer/${filename}-resize.png`);
-
-    return {
-        filename: filename + "-resize.png"
-    };
-};
-
+const _getUrlFontsStyle = () => {
+    let fonts = ['Roboto','Arial','Abel','RalewayRegular','Exo+2','Montserrat','Montserrat+Regular','Montserrat+Bold','Pattaya'];
+    // return "<style>@import url('https://fonts.googleapis.com/css?family=Pattaya|Roboto|RalewayRegular|Exo+2|Abel|Montserrat|Montserrat+Regular|Montserrat+Bold</style>"
+    return `<style>@import url('https://fonts.googleapis.com/css?family=${fonts.join('|')}</style>`
+}
 /**
  * privada usada desde adentro 
  * @param {*} html 
  * @returns 
  */  
-const _htmlToImg = async ( filename, html) => {
-    // const browser = await puppeteer.launch();
+const _htmlToImg = async ( filename, html, scale = 1) => {
+    
     const browser = await puppeteer.launch({
         headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
 
-    //A4
+    // https://github.com/puppeteer/puppeteer/issues/422
+    let fonts = _getUrlFontsStyle(); 
+
+    //A4 px
     let options = {
         width: 1122,
         height: 790,
     };
-
+    
+    let options_output_size = {
+        width: 2244,
+        height: 1580,
+    };
+    
     // page.setViewport({width: options.width, height: options.height, deviceScaleFactor: 2});
+    // page.setCacheEnabled(false);
+    await page.setContent(html + fonts, {waitUntil: 'networkidle2'});
+  
+    await page.addStyleTag({
+        path: path.resolve("./public") + "/stylesheets/app2_original.css",
+    });
+    
+    await page.addStyleTag({
+        path: path.resolve("./public") + "/stylesheets/ucc_original.css"
+    });
 
-    await page.setContent(html);
+    let content = await page.content();
+    // console.log('content: ', content);
     
-    await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/app2.css",
-    });
-    await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/ucc.css",
-    });
-    
+    // fs.writeFileSync('imagemerge/test.html', content);
+
     page.setViewport({
         width: options.width,
         height: options.height,
-        deviceScaleFactor: 2,
+        deviceScaleFactor: scale,
     });
 
-    let res =  await page.screenshot({
-        
-        path: `imagespuppeteer/${filename}.png`,
+
+    page.on("error", function (err) {  
+        theTempValue = err.toString();
+        console.log("Error: " + theTempValue);
+    }) 
+
+    let screenshot =  await page.screenshot({
         fullPage: true,
         omitBackground: true,
-        encoding:"base64"
+        encoding: "binary"
     });
-    
-    // console.log('res: ', res);
-
     await browser.close();
-
-    let imgBuffer = Buffer.from(res, 'base64');
+    // let imgBuffer =  Buffer.from(res, 'base64');
     
-//   return   sharp(`imagespuppeteer/${filename}.png`, {
-  return   sharp(imgBuffer, {
+    return   sharp(screenshot, {
         density: 300
     }).resize({
         fit: sharp.fit.cover,
-        width: 2244,
-        height: 1580,
-        // width: options.width,
-        // height: options.height ,
+        width: options_output_size.width,
+        height: options_output_size.height,
         })
         .png({
-            quality: 100,
-            compressionLevel: 5,
+            compressionLevel: 9
         })
+        // .toBuffer({resolveWithObject: true}).then((data) => {
         .toBuffer().then((data) => {
-            // console.log(data); 
             return data; 
-            return Buffer.from(data).toString('base64');
         })
-        // .toFile(`imagespuppeteer/${filename}-resize.png`).then((metadata) => {
-        //     console.log(metadata); 
-        //     return { filename: filename + "-resize" };
-        // });
 }
 
-const merge = async function (pfondo, pdomtext, format ) {
-    format = format || ".png";
-
-    // let fondo = `imagessharp/${pfondo}`;
+const _merge = async function (buffer_dom, outformat) {
     let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
-    // let fondo = `fondos/${pfondo}`;
-    // console.log('fondo: ', fondo);
-    // // let domtext = `imagespuppeteer/${pdomtext}`;
-    // let domtext = `imagespuppeteer/${pdomtext}`;
-    let domtext =  'imagespuppeteer/certificado14153-1919835-resize.png';
-    // console.log('domtext: ', domtext);
-    
-    let filename = `output-${Math.round(Math.random() * 100) + format}`;
-    
-    console.log('filename: ', filename);
-
-    // let merge = await sharp(fondo)
-    //     .composite([{ input: domtext  }])
-    //     .toBuffer({ resolveWithObject: true })
-    //     .catch(function(err) {
-    //         console.log('--ERROR--',err)
-    //     });
-    // .toFile('imagemerge/' + filename);
-
 
     let merge = sharp(fondo).composite([{
-        input: domtext
-    }]);
-
-    // if (format == ".png") {
-    if (format == "bin") {
-
-        let result = await merge
-            .toBuffer({
-                resolveWithObject: true
-            })
-            .catch(function (err) {
-                console.log("--ERROR png --", err);
-            });
-
-        return result.data.toString("base64");
-    }
-
-    let result = await merge
-        .toFile('imagemerge/' + filename)
-        .catch(function (err) {
-            console.log("--ERROR png --", err);
-        });
-
-    return {
-        'result': filename
-    }
-
-};
-
-const _merge = async function (dom_img, outformat) {
-    outformat = outformat || "bin";
-
-    let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
-    // let path_dom_img = `imagespuppeteer/${dom_img}.png`;
-    
-    let path_dom_img = dom_img;
-
-    // let filename = dom_img + '.png';
-
-    // console.log("filename:", filename)
-
-    console.log('path_dom_img: ', path_dom_img);
-
-    let merge = sharp(fondo).composite([{
-        input: path_dom_img
+        input: buffer_dom,
     }]);
 
     return await merge
-        // .toFile('imagemerge/' + filename).then( (metadata) => {
-        //     return {
-        //         'result': filename
-        //     } 
-        // })
         .toBuffer().then((data) => {
             return data;
-            return Buffer.from(data).toString('base64');
+            // return Buffer.from(data).toString('base64');
         })
         .catch(function (err) {
             console.log("--ERROR png 2 --", err);
             return false;
         });
-
-    
-
 };
 
-const svgTopng = async function () {
-    // sharp("imagessharp/new-file35.830499953295124.png")
-    // .metadata().then(function(metadata) {
-    //     console.log(metadata)
-    // });
 
-    let options = {
-        width: 1122 * 2,
-        height: 790 * 2,
-    };
 
-    // let filename = "fondoDiplomaFjsPerkins-" + Math.round(Math.random() * 100);
-    let filename = "fondoDiplomaFjsPerkins";
 
-    // console.log(filename);
 
-    sharp("fondoDiplomaFjsPerkins.svg", {
-            density: 300
-        })
-        .resize({
-            fit: sharp.fit.cover,
-            // height: 1580,
-            // width: 2244,
-            width: options.width,
-            height: options.height,
-        })
-        .png({
-            quality: 100,
-            compressionLevel: 5,
-        })
-        .toFile("imagessharp/" + filename + ".png")
-        // .toFile("fondos/" + filename + ".png")
-        .then(function (info) {
-            console.log("info", info);
-        })
-        .catch(function (err) {
-            console.log(err);
-        });
 
-    return {
-        filename: filename
-    };
-};
 
-const imgToPdf = function (name_pdf, name_img) {
-    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
+const pdfToBlob = function (blob) {
+    console.log('pdfToBlob: ', moment().format('mm:ss.SSS'));
     
-    let path_file = `imagemerge/${name_pdf}.pdf`;
-
     doc = new PDFDocument({
         size: "A4",
         layout: "landscape"
     });
     
-    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
-    const stream = fs.createWriteStream(path_file);
-
-    doc.pipe(stream);
-
-    doc.image(`imagemerge/${name_img}.png`, 0, 0, {
-        fit: [841.89, 595.28]
-    });
-
-    let result = doc.end();
-
-    // await new Promise(resolve => {
-    return new Promise((resolve) => {
-        stream.on("finish", function () {
-            resolve({
-                response: name_pdf
-            });
-        });
-    });
-};
-
-const pdfToBlob_old = function (name_pdf, name_img) {
-    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
+    let name = 'output-temp' + moment().format('mmss') + '.pdf';
+    let path_file = 'imagemerge/' + name ;
+    console.log('path_file: ', path_file);
     
-    let path_file = `imagemerge/${name_pdf}.pdf`;
-
-    doc = new PDFDocument({
-        size: "A4",
-        layout: "landscape"
-    });
-    
-    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
-    const stream = fs.createWriteStream(path_file);
-
-    doc.pipe(stream);
-
-    // doc.image(`imagemerge/${name_img}.png`, 0, 0, {
-    doc.image(`imagemerge/${name_img}`, 0, 0, {
-        fit: [841.89, 595.28]
-    });
-
-    let result = doc.end();
-
-    // await new Promise(resolve => {
-    return new Promise((resolve) => {
-        stream.on("finish", function () {
-            fs.readFile(path_file,'base64',function(err,data){
-                resolve({
-                    response: data
-                });
-            })
-        });
-    });
-};
-
-const pdfToBlob = function (name_pdf, blob) {
-    doc = new PDFDocument({
-        size: "A4",
-        layout: "landscape"
-    });
-    
-    let path_file = 'imagemerge/output-temp.pdf';
 
     const stream = fs.createWriteStream(path_file);
 
@@ -381,19 +138,14 @@ const pdfToBlob = function (name_pdf, blob) {
         fit: [841.89, 595.28]
     });
     
-    let result = doc.end();
-
-    console.log('result: ', result);
-
-
-
-    // // await new Promise(resolve => {
+    let res = doc.end();
+    
     return new Promise((resolve) => {
          stream.on("finish", function (data) {
             fs.readFile(path_file,'base64',function(err,data){
-                resolve({
-                    response: data
-                });
+                resolve(
+                     data
+                );
             })
         });
     });
@@ -405,26 +157,23 @@ const pdfToBlob = function (name_pdf, blob) {
  * @param {raw string dom certificado } html 
  * @returns 
  */
-const convertHtmlToPdf = async function(name_pdf,html){
-
-    // let  { filename } = await _htmlToImg(name_pdf,html);
-    let base64Dom =  await _htmlToImg(name_pdf,html);
+const convertHtmlToPdf = async function(name_pdf,html,options){
+    console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
+    // return buffer_dom.data.toString("base64");
     
-    //    let { result } = await _merge(filename, 'pdf');
-    let blobMerge = await _merge(base64Dom, 'pdf');
-//    return  test(blobMerge); 
+    let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
+    console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
+    
+    let buffer_merge = await _merge(buffer_dom, 'pdf');
+    console.log('_merge: ', moment().format('mm:ss.SSS'));
+    
 
-   let r = await  pdfToBlob(name_pdf,blobMerge)
-    return r ; 
+    return { data: await  pdfToBlob(buffer_merge), name_pdf:name_pdf };
+    
 }
 
 
-
 module.exports = {
-    svgTopng,
-    htmlToImg,
-    merge,
-    imgToPdf,
     pdfToBlob,
     convertHtmlToPdf
 };

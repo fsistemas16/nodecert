@@ -34,3 +34,9 @@ https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 
 
 https://burnedikt.com/dockerized-node-development-and-mounting-node-volumes/
+
+
+
+//Instalacion 73
+https://computingforgeeks.com/install-node-js-14-on-ubuntu-debian-linux/
+> sudo apt-get install -y libgbm-dev //dependencia de pupeteer

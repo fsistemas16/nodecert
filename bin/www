@@ -7,12 +7,17 @@
 var app = require('../app');
 var debug = require('debug')('canvasnode:server');
 var http = require('http');
-
+const dotenv = require('dotenv');
 /**
  * Get port from environment and store in Express.
  */
 
+dotenv.config();
+
 var port = normalizePort(process.env.PORT || '3000');
+
+console.log('port: ', port);
+
 app.set('port', port);
 
 /**
