@@ -8,7 +8,7 @@ const moment = require("moment");
 
 
 const _getUrlFontsStyle = () => {
-    let fonts = ['Pattaya','Roboto','RalewayRegular','Exo+2','Abek','Montserrat','Montserrat+Regular','Montserrat+Bold'];
+    let fonts = ['Roboto','Arial','Abel','RalewayRegular','Exo+2','Montserrat','Montserrat+Regular','Montserrat+Bold','Pattaya'];
     // return "<style>@import url('https://fonts.googleapis.com/css?family=Pattaya|Roboto|RalewayRegular|Exo+2|Abel|Montserrat|Montserrat+Regular|Montserrat+Bold</style>"
     return `<style>@import url('https://fonts.googleapis.com/css?family=${fonts.join('|')}</style>`
 }
