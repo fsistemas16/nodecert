@@ -4,7 +4,7 @@ WORKDIR ./app
 
 COPY package*.json .
 
-RUN  npm install -g nodemon && npm config set puppeteer_skip_chromium_download true && npm install --save-dev
+RUN  npm config set puppeteer_skip_chromium_download true && npm install --save-dev
 
 #ENV PATH ./app/node_modules/.bin:$PATH
 

@@ -9,3 +9,6 @@ services:
     ports:
       - "3000:3000"
     command: [sh, -c, "npm install && npm run startdev"]
+volumes: 
+  node_modules:
+    external: true
