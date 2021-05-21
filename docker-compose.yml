@@ -5,6 +5,7 @@ services:
       context: ./
     volumes:
       - .:/app
+      - ./node_modules:/app/node_modules/
     ports:
       - "3000:3000"
-    command: "npm run startdev"
+    command: [sh, -c, "npm install && npm run startdev"]
