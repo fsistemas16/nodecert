@@ -14,10 +14,8 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-var port = normalizePort(process.env.PORT || '3000');
-
+var port = normalizePort(process.env.PORT || '3009');
 console.log('port: ', port);
-
 app.set('port', port);
 
 /**

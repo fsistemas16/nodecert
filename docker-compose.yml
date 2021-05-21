@@ -1,15 +1,10 @@
-version: "2"
+version: '3'
 services:
-  node:
-    image: "canvasnode:4"
-    working_dir: /app
-    environment:
-      - NODE_ENV=dev
+  web:
+    build:
+      context: ./
     volumes:
-      - ./:/app
-      - ./exclude:/app/node_modules/
+      - .:/app
     ports:
       - "3000:3000"
     command: "npm run startdev"
-volumes:
-    exclude:
