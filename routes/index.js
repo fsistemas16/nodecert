@@ -2,8 +2,13 @@ var express = require('express');
 var router = express.Router();
 const path = require('path');
 const fs = require('fs')
-const  puppet  = require('../controller/puppet');
 const moment = require("moment");
+const { reset } = require('nodemon');
+
+const  puppet  = require('../controller/puppet');
+const  puppetOnDisk  = require('../controller/puppetOnDisk');
+
+
 
 /* GET home page. */
 router.get('/a', function(req, res, next) {
@@ -93,6 +98,13 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
   let response =  await puppet.convertHtmlToPdf(name_pdf, html, options_output);
   console.log('response: ', moment().format('mm:ss.SSS'));
   res.send(response);
+
+});
+
+router.post('/convertSvgToPng', async function (req, res, next) {
+
+  puppetOnDisk.svgToPng();
+  res.send('d');
 
 });
 

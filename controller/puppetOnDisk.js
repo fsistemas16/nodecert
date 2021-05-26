@@ -150,29 +150,39 @@ const merge = async function (pfondo, pdomtext, format ) {
  * Transforma un svg en png 
  * @returns 
  */
-const svgTopng = async function () {
+const svgToPng = async function () {
     // sharp("imagessharp/new-file35.830499953295124.png")
     // .metadata().then(function(metadata) {
     //     console.log(metadata)
     // });
 
+    let filenames = [
+    'fondoDiplomaFjsAcer.svg',
+    'fondoDiplomaFjsAUSJAL.svg',
+    'fondoDiplomaFjsBloqueMinis.svg',
+    'fondoDiplomaFjsCrianza.svg',
+    'fondoDiplomaFjsIcdaCrea.svg',
+    'fondoDiplomaFjsItec.svg',
+    'fondoDiplomaFjsProCordoba.svg',
+    'fondoDiplomaFjsUfersa.svg' ]
+    
+    
     let options = {
         width: 1122 * 2,
         height: 790 * 2,
     };
 
     // let filename = "fondoDiplomaFjsPerkins-" + Math.round(Math.random() * 100);
-    let filename = "fondoDiplomaFjsPerkins";
+    // let filename = "fondoDiplomaFjsPerkins";
 
     // console.log(filename);
+    for await (variable of filenames) {
 
-    sharp("fondoDiplomaFjsPerkins.svg", {
+        sharp("originalsvg/"+ variable, {
             density: 300
         })
         .resize({
             fit: sharp.fit.cover,
-            // height: 1580,
-            // width: 2244,
             width: options.width,
             height: options.height,
         })
@@ -180,7 +190,7 @@ const svgTopng = async function () {
             quality: 100,
             compressionLevel: 5,
         })
-        .toFile("imagessharp/" + filename + ".png")
+        .toFile("fondos/" + variable + ".png")
         // .toFile("fondos/" + filename + ".png")
         .then(function (info) {
             console.log("info", info);
@@ -188,11 +198,12 @@ const svgTopng = async function () {
         .catch(function (err) {
             console.log(err);
         });
-
-    return {
-        filename: filename
+        
+    }
+        // return {
+        //     filename: filename
+        // };
     };
-};
 
 
 const imgToPdf = function (name_pdf, name_img) {
@@ -226,70 +237,74 @@ const imgToPdf = function (name_pdf, name_img) {
     });
 };
 
-const pdfToBlob_old = function (name_pdf, name_img) {
-    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
+// const pdfToBlob_old = function (name_pdf, name_img) {
+//     //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
     
-    let path_file = `imagemerge/${name_pdf}.pdf`;
+//     let path_file = `imagemerge/${name_pdf}.pdf`;
 
-    doc = new PDFDocument({
-        size: "A4",
-        layout: "landscape"
-    });
+//     doc = new PDFDocument({
+//         size: "A4",
+//         layout: "landscape"
+//     });
     
-    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
-    const stream = fs.createWriteStream(path_file);
+//     // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
+//     const stream = fs.createWriteStream(path_file);
 
-    doc.pipe(stream);
+//     doc.pipe(stream);
 
-    // doc.image(`imagemerge/${name_img}.png`, 0, 0, {
-    doc.image(`imagemerge/${name_img}`, 0, 0, {
-        fit: [841.89, 595.28]
-    });
+//     // doc.image(`imagemerge/${name_img}.png`, 0, 0, {
+//     doc.image(`imagemerge/${name_img}`, 0, 0, {
+//         fit: [841.89, 595.28]
+//     });
 
-    let result = doc.end();
+//     let result = doc.end();
 
-    // await new Promise(resolve => {
-    return new Promise((resolve) => {
-        stream.on("finish", function () {
-            fs.readFile(path_file,'base64',function(err,data){
-                resolve({
-                    response: data
-                });
-            })
-        });
-    });
-};
+//     // await new Promise(resolve => {
+//     return new Promise((resolve) => {
+//         stream.on("finish", function () {
+//             fs.readFile(path_file,'base64',function(err,data){
+//                 resolve({
+//                     response: data
+//                 });
+//             })
+//         });
+//     });
+// };
 
-const pdfToBlob_old = function (name_pdf, name_img) {
-    //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
+// const pdfToBlob_old = function (name_pdf, name_img) {
+//     //sizes http://pdfkit.org/docs/paper_sizes.html#a-series
     
-    let path_file = `imagemerge/${name_pdf}.pdf`;
+//     let path_file = `imagemerge/${name_pdf}.pdf`;
 
-    doc = new PDFDocument({
-        size: "A4",
-        layout: "landscape"
-    });
+//     doc = new PDFDocument({
+//         size: "A4",
+//         layout: "landscape"
+//     });
     
-    // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
-    const stream = fs.createWriteStream(path_file);
+//     // doc.pipe(fs.createWriteStream('imagemerge/output-417.pdf'));
+//     const stream = fs.createWriteStream(path_file);
 
-    doc.pipe(stream);
+//     doc.pipe(stream);
 
-    // doc.image(`imagemerge/${name_img}.png`, 0, 0, {
-    doc.image(`imagemerge/${name_img}`, 0, 0, {
-        fit: [841.89, 595.28]
-    });
+//     // doc.image(`imagemerge/${name_img}.png`, 0, 0, {
+//     doc.image(`imagemerge/${name_img}`, 0, 0, {
+//         fit: [841.89, 595.28]
+//     });
 
-    let result = doc.end();
+//     let result = doc.end();
 
-    // await new Promise(resolve => {
-    return new Promise((resolve) => {
-        stream.on("finish", function () {
-            fs.readFile(path_file,'base64',function(err,data){
-                resolve({
-                    response: data
-                });
-            })
-        });
-    });
-};
+//     // await new Promise(resolve => {
+//     return new Promise((resolve) => {
+//         stream.on("finish", function () {
+//             fs.readFile(path_file,'base64',function(err,data){
+//                 resolve({
+//                     response: data
+//                 });
+//             })
+//         });
+//     });
+// };
+
+module.exports = {
+    svgToPng
+}
