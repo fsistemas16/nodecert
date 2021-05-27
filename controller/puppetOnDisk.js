@@ -190,8 +190,7 @@ const svgToPng = async function () {
             quality: 100,
             compressionLevel: 5,
         })
-        .toFile("fondos/" + variable + ".png")
-        // .toFile("fondos/" + filename + ".png")
+        .toFile("fondos/" + variable.replace('.svg','.png'))
         .then(function (info) {
             console.log("info", info);
         })

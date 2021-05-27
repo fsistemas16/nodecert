@@ -93,10 +93,10 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
         })
 }
 
-const _merge = async function (buffer_dom, outformat) {
-    let fondo = 'fondos/fondoDiplomaFjsPerkins.png';
+const _merge = async function (buffer_dom, fondo,  outformat) {
+    let path_fondo = `fondos/${fondo}.png`;
 
-    let merge = sharp(fondo).composite([{
+    let merge = sharp(path_fondo).composite([{
         input: buffer_dom,
     }]);
 
@@ -158,14 +158,14 @@ const pdfToBlob = function (blob) {
  * @param {raw string dom certificado } html 
  * @returns 
  */
-const convertHtmlToPdf = async function(name_pdf,html,options){
+const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
     console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
     // return buffer_dom.data.toString("base64");
     
     let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
     console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
     
-    let buffer_merge = await _merge(buffer_dom, 'pdf');
+    let buffer_merge = await _merge(buffer_dom, fondo, 'pdf');
     console.log('_merge: ', moment().format('mm:ss.SSS'));
     
 

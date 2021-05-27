@@ -30,4 +30,12 @@ https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 https://burnedikt.com/dockerized-node-development-and-mounting-node-volumes/
 
 ## issues 
+
+en windows instalar dependencias como adminstrador puppeter chrome 
 https://gist.github.com/andrei-tofan/b75082574544aee19de1295a48323ad5
+
+
+https://github.com/puppeteer/puppeteer/issues/1994
+
+
+https://hackernoon.com/alpine-docker-image-with-secured-communication-ssl-tls-go-restful-api-128eb6b54f1f
