@@ -96,9 +96,32 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
   
   
   let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
+
   let response =  await puppet.convertHtmlToPdf(name_pdf, html, fondo,options_output);
   
   console.log('response: ', moment().format('mm:ss.SSS'));
+  
+  res.send(response);
+
+});
+router.post('/convertHtmlToPdfMultiple', async function (req, res, next) {
+  
+  let {
+    dom_certs,
+    name_pdf,
+    options
+  } = req.body;
+  
+
+  // console.log('dom_certs: ', typeof(dom_certs));
+  // console.log(dom_certs.length);
+  // console.log('dom_certs: ', decodeURIComponent(dom_certs[0].html));
+
+  // return false;
+   
+  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
+  let response =  await puppet.convertHtmlToPdfMultiple(dom_certs,name_pdf,options_output);
+  
   res.send(response);
 
 });

@@ -52,10 +52,7 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
         path: path.resolve("./public") + "/stylesheets/ucc_original.css"
     });
 
-    let content = await page.content();
-    // console.log('content: ', content);
-    
-    // fs.writeFileSync('imagemerge/test.html', content);
+    // let content = await page.content();
 
     page.setViewport({
         width: options.width,
@@ -64,16 +61,17 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
     });
 
 
-    page.on("error", function (err) {  
-        theTempValue = err.toString();
-        console.log("Error: " + theTempValue);
-    }) 
+    // page.on("error", function (err) {  
+    //     theTempValue = err.toString();
+    //     console.log("Error: " + theTempValue);
+    // }) 
 
     let screenshot =  await page.screenshot({
         fullPage: true,
         omitBackground: true,
         encoding: "binary"
     });
+    
     await browser.close();
     // let imgBuffer =  Buffer.from(res, 'base64');
     
@@ -117,12 +115,13 @@ const _merge = async function (buffer_dom, fondo,  outformat) {
 
 
 
-const pdfToBlob = function (blob) {
+const pdfToBlob = function (blob, is_multiple = false) {
     console.log('pdfToBlob: ', moment().format('mm:ss.SSS'));
     
     doc = new PDFDocument({
         size: "A4",
-        layout: "landscape"
+        layout: "landscape",
+        autoFirstPage:false
     });
     
     // let name = 'output-temp' + moment().format('mmss') + '.pdf';
@@ -130,14 +129,28 @@ const pdfToBlob = function (blob) {
     let path_file = 'imagemerge/' + name ;
     console.log('path_file: ', path_file);
     
-
     const stream = fs.createWriteStream(path_file);
 
     doc.pipe(stream);
 
-    doc.image(blob, 0, 0, {
-        fit: [841.89, 595.28]
-    });
+    if (is_multiple) {
+
+        blob.forEach( (element,i) => {
+            
+            doc.addPage();
+            doc.image(element, 0, 0, {
+                fit: [841.89, 595.28]
+            });
+        });
+
+    }else{
+        
+        doc.addPage();
+        doc.image(blob, 0, 0, {
+            fit: [841.89, 595.28]
+        });
+
+    }
     
     let res = doc.end();
     
@@ -161,7 +174,7 @@ const pdfToBlob = function (blob) {
 const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
     console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
     // return buffer_dom.data.toString("base64");
-    
+
     let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
     console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
     
@@ -169,12 +182,36 @@ const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
     console.log('_merge: ', moment().format('mm:ss.SSS'));
     
 
-    return { data: await  pdfToBlob(buffer_merge), name_pdf:name_pdf };
+    return { data: await  pdfToBlob(buffer_merge,false), name_pdf:name_pdf };
+    
+}
+
+
+const convertHtmlToPdfMultiple = async function(dom_certs,name_pdf,options){
+    
+    console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
+    // return buffer_dom.data.toString("base64");
+    let buffer_dom = [];
+    
+    for await (element of dom_certs ) {
+        
+        // https://developer.mozilla.org/es/docs/Glossary/Base64 acentos 
+        // let html_string = Buffer.from(element.html, 'base64').toString('utf8')
+        // buffer_dom.push(await _htmlToImg(element.name_pdf, "'" + html_string + "'", options.scale));
+        // console.log('buff: ', html_string.substring(0,2000));
+
+        let html_string = decodeURIComponent(element.html);
+        buffer_dom.push(await _htmlToImg(element.name_pdf,   html_string  , options.scale));
+        
+    }
+
+    return { data: await  pdfToBlob(buffer_dom,true), name_pdf : name_pdf };
     
 }
 
 
 module.exports = {
     pdfToBlob,
-    convertHtmlToPdf
+    convertHtmlToPdf,
+    convertHtmlToPdfMultiple
 };
