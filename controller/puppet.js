@@ -5,6 +5,7 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const PDFDocument = require("pdfkit");
 const moment = require("moment");
+const AdmZip = require("adm-zip");
 
 
 const _getUrlFontsStyle = () => {
@@ -165,6 +166,25 @@ const pdfToBlob = function (blob, is_multiple = false) {
     });
 };
 
+const pdfToZip = async function (array_blob){
+    console.log('pdfToZip: ' + array_blob.length);
+    
+    let zip = new AdmZip();
+    
+    for await (element of array_blob ) {
+        const  data_pdf  = await pdfToBlob(element.dom_img,false);
+        
+        console.log('data_pdf: ', data_pdf.substring(0,50));
+
+        zip.addFile(element.name_pdf, Buffer.from(data_pdf, "base64"));
+        
+    }
+    
+    console.log('fin zip ');
+    return Buffer.from(zip.toBuffer()).toString('base64') ;
+    // zip.writeZip('zipp.zip');
+}
+
 /**
  * 
  * @param {nombre del pdf sin extension} name_pdf 
@@ -187,9 +207,9 @@ const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
 }
 
 
-const convertHtmlToPdfMultiple = async function(dom_certs,name_pdf,options){
+const convertHtmlToPdfMultiple = async function(dom_certs,name_file,options){
     
-    console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
+    console.log('ini _htmlToImg: ', moment().format('mm:ss.SSS'));
     // return buffer_dom.data.toString("base64");
     let buffer_dom = [];
     
@@ -199,13 +219,35 @@ const convertHtmlToPdfMultiple = async function(dom_certs,name_pdf,options){
         // let html_string = Buffer.from(element.html, 'base64').toString('utf8')
         // buffer_dom.push(await _htmlToImg(element.name_pdf, "'" + html_string + "'", options.scale));
         // console.log('buff: ', html_string.substring(0,2000));
-
-        let html_string = decodeURIComponent(element.html);
-        buffer_dom.push(await _htmlToImg(element.name_pdf,   html_string  , options.scale));
         
-    }
+        let html_string = decodeURIComponent(element.html);
+        
+        if(options.output == 'I'){
+            
+            buffer_dom.push(await _htmlToImg(element.name_pdf,   html_string  , options.scale));
+            
+        }else{
+            //zip     
+            buffer_dom.push(
+                {
+                    name_pdf : element.name_pdf ,
+                    dom_img : await _htmlToImg(element.name_pdf,   html_string  , options.scale) 
+                }
+                );
+            }
+            
+        }
+        
+        console.log('fin _htmlToImg: ', moment().format('mm:ss.SSS'));
 
-    return { data: await  pdfToBlob(buffer_dom,true), name_pdf : name_pdf };
+    if(options.output == 'I'){
+        
+        return { data: await pdfToBlob(buffer_dom,true), name_file : name_file };
+    }
+    
+    return { data: await pdfToZip(buffer_dom),  name_file : name_file };
+
+
     
 }
 

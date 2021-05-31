@@ -10,28 +10,12 @@ const  puppetOnDisk  = require('../controller/puppetOnDisk');
 
 
 
-/* GET home page. */
-router.get('/a', function(req, res, next) {
-  
-  res.render('webworkerjspdf', { title: 'Express' });
-});
 
 
-router.get('/print', function(req, res, next) {
-  
-  res.render('screenshot');
-});
+
 
 router.get('/dc', function(req, res, next) {
   res.render('domcert');
-});
-
-router.get('/dco', function(req, res, next) {
-  res.render('extractcssdomcert');
-});
-
-router.get('/htc', function(req, res, next) {
-  res.render('htc');
 });
 
 router.post('/m', async function(req, res, next) {
@@ -40,7 +24,6 @@ router.post('/m', async function(req, res, next) {
   let response = await puppet.merge(fondo,domtext,format);
 
   res.send(response);
-
 });
 
 router.post('/q', async function(req, res, next) {
@@ -106,21 +89,25 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
 });
 router.post('/convertHtmlToPdfMultiple', async function (req, res, next) {
   
+  let default_options = {
+    scale : 1,
+    tipo_emision : "Z"
+  } 
+
   let {
     dom_certs,
-    name_pdf,
+    name_file,
     options
   } = req.body;
   
 
   // console.log('dom_certs: ', typeof(dom_certs));
-  // console.log(dom_certs.length);
   // console.log('dom_certs: ', decodeURIComponent(dom_certs[0].html));
 
-  // return false;
    
-  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
-  let response =  await puppet.convertHtmlToPdfMultiple(dom_certs,name_pdf,options_output);
+  // let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
+  let options_output = typeof(options) == 'undefined' || options == '' ? default_options  : JSON.parse(options);
+  let response =  await puppet.convertHtmlToPdfMultiple(dom_certs,name_file,options_output);
   
   res.send(response);
 
