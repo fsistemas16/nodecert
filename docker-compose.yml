@@ -1,14 +1,14 @@
 version: '3'
 services:
   web:
-    build:
-      context: ./
+    build: 
+      context: .
     volumes:
       - .:/app
-      - ./node_modules:/app/node_modules/
     ports:
-      - "3000:3000"
+      - "3002:3000"
     command: [sh, -c, "npm install && npm run startdev"]
-volumes: 
-  node_modules:
-    external: true
+    environment:
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD_OLD: "true"
+      # NODE_EXTRA_CA_CERTS_OLD: /usr/local/share/ca-certificates/canvasnode.crt
+    working_dir: /app

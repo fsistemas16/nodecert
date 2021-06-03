@@ -21,6 +21,7 @@ const _getUrlFontsStyle = () => {
 const _htmlToImg = async ( filename, html, scale = 1) => {
     
     const browser = await puppeteer.launch({
+        executablePath: 'google-chrome-stable',
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
@@ -94,6 +95,7 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
 
 const _merge = async function (buffer_dom, fondo,  outformat) {
     let path_fondo = `fondos/${fondo}.png`;
+    console.log('path_fondo: ', path_fondo);
 
     let merge = sharp(path_fondo).composite([{
         input: buffer_dom,
@@ -228,12 +230,10 @@ const convertHtmlToPdfMultiple = async function(dom_certs,name_file,options){
             
         }else{
             //zip     
-            buffer_dom.push(
-                {
+            buffer_dom.push({
                     name_pdf : element.name_pdf ,
                     dom_img : await _htmlToImg(element.name_pdf,   html_string  , options.scale) 
-                }
-                );
+                });
             }
             
         }

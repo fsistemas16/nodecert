@@ -78,7 +78,7 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
   } = req.body;
   
   
-  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
+  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:2} : JSON.parse(options);
 
   let response =  await puppet.convertHtmlToPdf(name_pdf, html, fondo,options_output);
   

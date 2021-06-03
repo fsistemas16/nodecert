@@ -29,6 +29,20 @@ https://www.docker.com/blog/keep-nodejs-rockin-in-docker/
 
 https://burnedikt.com/dockerized-node-development-and-mounting-node-volumes/
 
+https://www.serverlab.ca/tutorials/linux/administration-linux/how-to-set-environment-variables-in-linux/
+
+https://medium.com/@jonatascastro12/understanding-self-signed-certificate-in-chain-issues-on-node-js-npm-git-and-other-applications-ad88547e7028
+
+https://stackoverflow.com/questions/52940430/sslerror-ssl-decryption-failed-or-bad-record-mac-decryption-failed-or-bad-re
+
+proxy 
+
+https://stackoverflow.com/questions/9626990/receiving-error-error-ssl-error-self-signed-cert-in-chain-while-using-npm/35510347#35510347
+
+
+librerias debian puppeter 
+https://stackoverflow.com/questions/62345581/node-js-puppeteer-on-docker-no-usable-sandbox
+
 ## issues 
 
 en windows instalar dependencias como adminstrador puppeter chrome 
@@ -39,3 +53,10 @@ https://github.com/puppeteer/puppeteer/issues/1994
 
 
 https://hackernoon.com/alpine-docker-image-with-secured-communication-ssl-tls-go-restful-api-128eb6b54f1f
+
+
+
+&& npm install sharp
+                       && npm config set strict-ssl false
+                       && npm add --unsafe-perm puppeteer  
+                       && npm install 
