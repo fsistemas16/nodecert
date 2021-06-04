@@ -86,6 +86,7 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
     options
   } = req.body;
   
+  console.log('options: ', options);
 
   let options_output = typeof(options) == 'undefined' || options == '' ? default_options : options;
 

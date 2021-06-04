@@ -20,13 +20,15 @@ const _getUrlFontsStyle = () => {
  */  
 const _htmlToImg = async ( filename, html, scale = 1) => {
     console.log('scale: ', scale);
+
+    scale = parseInt(scale)
     
     const browser_config = {
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
     };
 
-    if(process.env.env = 'local'){
+    if(process.env.ENV == 'local'){
         browser_config.executablePath =  'google-chrome-stable'
     }
     
@@ -202,6 +204,8 @@ const pdfToZip = async function (array_blob){
 const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
     
     console.log('options: ', options.scale);
+    console.log('options: ', typeof(options.scale));
+    
     console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
     // return buffer_dom.data.toString("base64");
 
