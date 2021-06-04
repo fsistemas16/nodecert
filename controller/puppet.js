@@ -21,11 +21,17 @@ const _getUrlFontsStyle = () => {
 const _htmlToImg = async ( filename, html, scale = 1) => {
     console.log('scale: ', scale);
     
-    const browser = await puppeteer.launch({
-        executablePath: 'google-chrome-stable',
+    const browser_config = {
         headless: true,
         args: ["--no-sandbox", "--disable-setuid-sandbox"]
-    });
+    };
+
+    if(process.env.env = 'local'){
+        browser_config.executablePath =  'google-chrome-stable'
+    }
+    
+    
+    const browser = await puppeteer.launch(browser_config);
 
     const page = await browser.newPage();
 
@@ -58,7 +64,7 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
         // path: path.resolve("./public") + "/stylesheets/ucc_original.css"
     }); 
 
-    let content = await page.content();
+    // let content = await page.content();
     // console.log(content);
 
     page.setViewport({
@@ -131,8 +137,8 @@ const pdfToBlob = function (blob, is_multiple = false) {
         autoFirstPage:false
     });
     
-    // let name = 'output-temp' + moment().format('mmss') + '.pdf';
-    let name = 'output-temp.pdf';
+    let name = 'output-temp' + moment().format('mmss') + '.pdf';
+    // let name = 'output-temp.pdf';
     let path_file = 'imagemerge/' + name ;
     console.log('path_file: ', path_file);
     
@@ -194,10 +200,14 @@ const pdfToZip = async function (array_blob){
  * @returns 
  */
 const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
+    
+    console.log('options: ', options.scale);
     console.log('convertHtmlToPdf: ', moment().format('mm:ss.SSS'));
     // return buffer_dom.data.toString("base64");
 
-    let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
+    let html_string = decodeURIComponent(html);
+
+    let buffer_dom =  await _htmlToImg(name_pdf,html_string,options.scale);
 
     console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
     

@@ -75,6 +75,10 @@ router.post('/getBlobPdf', async function(req, res, next) {
 
 router.post('/convertHtmlToPdf', async function (req, res, next) {
 
+  let default_options = {
+    scale : 2
+  } 
+
   let {
     name_pdf,
     html,
@@ -82,10 +86,8 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
     options
   } = req.body;
   
-  // console.log('html: ', html.substring(0,1000));
-  // console.log('html: ', typeof(html) );
-  
-  let options_output = typeof(options) == 'undefined' || options == '' ? {scale:2} : JSON.parse(options);
+
+  let options_output = typeof(options) == 'undefined' || options == '' ? default_options : options;
 
   let response =  await puppet.convertHtmlToPdf(name_pdf, html, fondo,options_output);
   
@@ -108,12 +110,10 @@ router.post('/convertHtmlToPdfMultiple', async function (req, res, next) {
   } = req.body;
   
 
-  // console.log('dom_certs: ', typeof(dom_certs));
-  // console.log('dom_certs: ', decodeURIComponent(dom_certs[0].html));
+  console.log('options_output: ', typeof(options));
 
-   
-  // let options_output = typeof(options) == 'undefined' || options == '' ? {scale:1} : JSON.parse(options);
-  let options_output = typeof(options) == 'undefined' || options == '' ? default_options  : JSON.parse(options);
+  let options_output = typeof(options) == 'undefined' || options == '' ? default_options  : options;
+
   let response =  await puppet.convertHtmlToPdfMultiple(dom_certs,name_file,options_output);
   
   res.send(response);
