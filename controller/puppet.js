@@ -131,8 +131,8 @@ const pdfToBlob = function (blob, is_multiple = false) {
         autoFirstPage:false
     });
     
-    let name = 'output-temp' + moment().format('mmss') + '.pdf';
-    // let name = 'output-temp.pdf';
+    // let name = 'output-temp' + moment().format('mmss') + '.pdf';
+    let name = 'output-temp.pdf';
     let path_file = 'imagemerge/' + name ;
     console.log('path_file: ', path_file);
     
