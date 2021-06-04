@@ -19,6 +19,7 @@ const _getUrlFontsStyle = () => {
  * @returns 
  */  
 const _htmlToImg = async ( filename, html, scale = 1) => {
+    console.log('scale: ', scale);
     
     const browser = await puppeteer.launch({
         executablePath: 'google-chrome-stable',
@@ -43,18 +44,22 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
     };
     
     // page.setViewport({width: options.width, height: options.height, deviceScaleFactor: 2});
-    // page.setCacheEnabled(false);
+    page.setCacheEnabled(false);
+    
     await page.setContent(html + fonts, {waitUntil: 'networkidle2'});
   
     await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/app2_original.css",
+        path: path.resolve("./public") + "/stylesheets/app2.css"
+        // path: path.resolve("./public") + "/stylesheets/app2_original.css",
     });
     
     await page.addStyleTag({
-        path: path.resolve("./public") + "/stylesheets/ucc_original.css"
-    });
+        path: path.resolve("./public") + "/stylesheets/ucc.css"
+        // path: path.resolve("./public") + "/stylesheets/ucc_original.css"
+    }); 
 
-    // let content = await page.content();
+    let content = await page.content();
+    // console.log(content);
 
     page.setViewport({
         width: options.width,
@@ -80,9 +85,9 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
     return   sharp(screenshot, {
         density: 300
     }).resize({
-        fit: sharp.fit.cover,
-        width: options_output_size.width,
-        height: options_output_size.height,
+            fit: sharp.fit.cover,
+            width: options_output_size.width,
+            height: options_output_size.height,
         })
         .png({
             compressionLevel: 9
@@ -95,7 +100,6 @@ const _htmlToImg = async ( filename, html, scale = 1) => {
 
 const _merge = async function (buffer_dom, fondo,  outformat) {
     let path_fondo = `fondos/${fondo}.png`;
-    console.log('path_fondo: ', path_fondo);
 
     let merge = sharp(path_fondo).composite([{
         input: buffer_dom,
@@ -127,8 +131,8 @@ const pdfToBlob = function (blob, is_multiple = false) {
         autoFirstPage:false
     });
     
-    // let name = 'output-temp' + moment().format('mmss') + '.pdf';
-    let name = 'output-temp.pdf';
+    let name = 'output-temp' + moment().format('mmss') + '.pdf';
+    // let name = 'output-temp.pdf';
     let path_file = 'imagemerge/' + name ;
     console.log('path_file: ', path_file);
     
@@ -169,14 +173,10 @@ const pdfToBlob = function (blob, is_multiple = false) {
 };
 
 const pdfToZip = async function (array_blob){
-    console.log('pdfToZip: ' + array_blob.length);
-    
     let zip = new AdmZip();
     
     for await (element of array_blob ) {
         const  data_pdf  = await pdfToBlob(element.dom_img,false);
-        
-        console.log('data_pdf: ', data_pdf.substring(0,50));
 
         zip.addFile(element.name_pdf, Buffer.from(data_pdf, "base64"));
         
@@ -198,9 +198,11 @@ const convertHtmlToPdf = async function(name_pdf,html,fondo,options){
     // return buffer_dom.data.toString("base64");
 
     let buffer_dom =  await _htmlToImg(name_pdf,html,options.scale);
+
     console.log('_htmlToImg: ', moment().format('mm:ss.SSS'));
     
     let buffer_merge = await _merge(buffer_dom, fondo, 'pdf');
+
     console.log('_merge: ', moment().format('mm:ss.SSS'));
     
 

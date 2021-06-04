@@ -3,8 +3,6 @@ FROM node:14
 
 WORKDIR /app
 
-
-
 RUN echo deb http://http.debian.net/debian stretch-backports main > /etc/apt/sources.list.d/stretch-backports.list
 
 RUN apt-get update  --fix-missing -y
@@ -65,7 +63,7 @@ RUN  apt-get install -y wget gnupg ca-certificates \
 # RUN apt-get -P /usr/local/share/ca-certificates/cacert.org http://www.cacert.org/certs/root.crt http://www.cacert.org/certs/class3.crt
 # RUN update-ca-certificates
 
-RUN echo "----IN CRT----"
+# RUN echo "----IN CRT----"
 
 # ADD canvasnode.crt /usr/local/share/ca-certificates/canvasnode.crt
 # RUN chmod 644 /usr/local/share/ca-certificates/canvasnode.crt && update-ca-certificates

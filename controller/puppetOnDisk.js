@@ -40,13 +40,11 @@ const htmlToImg = async (html) => {
         deviceScaleFactor: 2,
     });
 
-
-  
-
     // console.log(page.viewport())    ;
     // let content = await page.content();
 
     let filename = `puppeter-${Math.round(Math.random() * 100)}`;
+    
     console.log(filename);
 
     await page.screenshot({
@@ -151,20 +149,25 @@ const merge = async function (pfondo, pdomtext, format ) {
  * @returns 
  */
 const svgToPng = async function () {
+    console.log('svgToPng: en 123 ' );
     // sharp("imagessharp/new-file35.830499953295124.png")
     // .metadata().then(function(metadata) {
     //     console.log(metadata)
     // });
 
+    // let filenames = [
+    // 'fondoDiplomaFjsAcer.svg',
+    // 'fondoDiplomaFjsAUSJAL.svg',
+    // 'fondoDiplomaFjsBloqueMinis.svg',
+    // 'fondoDiplomaFjsCrianza.svg',
+    // 'fondoDiplomaFjsIcdaCrea.svg',
+    // 'fondoDiplomaFjsItec.svg',
+    // 'fondoDiplomaFjsProCordoba.svg',
+    // 'fondoDiplomaFjsUfersa.svg' ]
+    
     let filenames = [
-    'fondoDiplomaFjsAcer.svg',
-    'fondoDiplomaFjsAUSJAL.svg',
-    'fondoDiplomaFjsBloqueMinis.svg',
-    'fondoDiplomaFjsCrianza.svg',
-    'fondoDiplomaFjsIcdaCrea.svg',
-    'fondoDiplomaFjsItec.svg',
-    'fondoDiplomaFjsProCordoba.svg',
-    'fondoDiplomaFjsUfersa.svg' ]
+        'fondoDiplomaFjsAcer.svg'
+    ]
     
     
     let options = {
@@ -175,8 +178,11 @@ const svgToPng = async function () {
     // let filename = "fondoDiplomaFjsPerkins-" + Math.round(Math.random() * 100);
     // let filename = "fondoDiplomaFjsPerkins";
 
-    // console.log(filename);
     for await (variable of filenames) {
+        
+        console.log('variable: ', variable);
+        
+        
 
         sharp("originalsvg/"+ variable, {
             density: 300
@@ -228,12 +234,14 @@ const imgToPdf = function (name_pdf, name_img) {
 
     // await new Promise(resolve => {
     return new Promise((resolve) => {
+
         stream.on("finish", function () {
             resolve({
                 response: name_pdf
             });
         });
     });
+
 };
 
 // const pdfToBlob_old = function (name_pdf, name_img) {

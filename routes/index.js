@@ -6,6 +6,7 @@ const moment = require("moment");
 const { reset } = require('nodemon');
 
 const  puppet  = require('../controller/puppet');
+
 const  puppetOnDisk  = require('../controller/puppetOnDisk');
 
 
@@ -34,8 +35,11 @@ router.post('/q', async function(req, res, next) {
 
 router.post('/p', async function(req, res, next) {
   // console.log(puppet.svgTopng());
-  let response = await puppet.svgTopng();
+  
+  let response = await puppetOnDisk.svgTopng();
+
   res.send(response);
+
 });
 
 router.get('/getPdf', async function(req, res, next) {
@@ -68,6 +72,7 @@ router.post('/getBlobPdf', async function(req, res, next) {
 
 });
 
+
 router.post('/convertHtmlToPdf', async function (req, res, next) {
 
   let {
@@ -77,6 +82,8 @@ router.post('/convertHtmlToPdf', async function (req, res, next) {
     options
   } = req.body;
   
+  // console.log('html: ', html.substring(0,1000));
+  // console.log('html: ', typeof(html) );
   
   let options_output = typeof(options) == 'undefined' || options == '' ? {scale:2} : JSON.parse(options);
 
