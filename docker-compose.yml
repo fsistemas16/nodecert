@@ -1,8 +1,9 @@
 version: '3'
 services:
   web:
-    build: 
-      context: .
+    image: francon/canvasnode_web:1
+    # build: 
+    #   context: .
     volumes:
       - .:/app
     ports:
