@@ -129,5 +129,12 @@ router.post('/convertSvgToPng', async function (req, res, next) {
 });
 
 
+router.get('/ip', async function (req, res, next) {
+
+
+  var ips = req.ip;
+  res.send(ips);
+
+});
 module.exports = router;
 
